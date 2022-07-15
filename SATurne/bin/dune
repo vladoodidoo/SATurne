@@ -1,0 +1,4 @@
+(executable
+ (public_name SATurne)
+ (name main)
+ (libraries SATurne))
