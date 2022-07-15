@@ -1,6 +1,7 @@
+open Types
 open Datastructures
 
 type formula = {
-    len: int;
-    clauses: Clause.t list
+    literals: LitSet.t;
+    clauses: LitSet.t list
 }

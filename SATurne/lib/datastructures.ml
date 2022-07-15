@@ -6,10 +6,9 @@ let compareLiteral x y =
     else
         Bool.compare x.neg y.neg
 
-module Clause = Set.Make(
+module LitSet = Set.Make(
     struct
         type t = literal
         let compare = compareLiteral
     end
 )
-
