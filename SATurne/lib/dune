@@ -1,2 +1,3 @@
 (library
- (name SATurne))
+ (name SATurne)
+ (modules_without_implementation types))
