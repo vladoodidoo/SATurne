@@ -1,19 +1,40 @@
 open Datastructures
 open FormulaType
+open Utils
+open Types
 
 let setVar formula var = 
-    let rec _setVar var tail =  function 
-        | [] -> tail
-        | e::r -> _setVar var ((LitSet.remove var e)::tail) r
+    let reverse = {var with neg = not var.neg} in
+    let rec _rmAllClauses = function
+        [] -> []
+        |clause::r when (litSetHas var clause) -> _rmAllClauses r
+        |clause::r -> clause::(_rmAllClauses r)
     in
-    {formula with clauses = (_setVar var [] formula.clauses)}
+    let _deleteNegFromClauses clauses =
+        List.map (fun elt -> LitSet.remove reverse elt) clauses
+    in
+    let _removeFromLiterals literals =
+        LitSet.filter (fun elt -> elt <> reverse && elt <> var) literals
+    in
+    {clauses = _deleteNegFromClauses (_rmAllClauses formula.clauses);
+        literals = _removeFromLiterals formula.literals}
+
+let rec unitClausePropagation formula = 
+    match getUnitClause formula with
+        Some _ when includesEmptyClause formula -> formula
+        |Some clause -> unitClausePropagation (setVar formula 
+                            (List.nth (LitSet.elements clause) 0))
+        |None -> formula
 
 (**
-let unitClausePropagation formula = 
-
 let subsumption forumula =
+**) 
 
-let monotoneLiteralFixing forumula = 
+let rec monotoneLiteralFixing formula = 
+    match getMonotoneLiteral formula with
+        Some literal -> monotoneLiteralFixing (setVar formula literal)
+        |None -> formula
 
+(**
 let dpKernel formula = 
 **) 

@@ -1,9 +1,10 @@
 open Utils
 open FromString
+open Dpll
 
 (**
     Testing fromString
- **)
+**)
 
 
 let%expect_test _ =
@@ -122,7 +123,7 @@ let%expect_test _ =
 
 (**
     Testing getMonotoneLitreal
- **)
+**)
 
 let%expect_test _ =
     let formula = fromString "A, !B, B + C, !A" in
@@ -149,3 +150,32 @@ let%expect_test _ =
     [%expect{| !R |}]
     (*Alphabetical order... if this test fails it does not mean the
      provided implementation is not right*)
+
+(**
+    Testing setVar
+ **)
+
+let%expect_test _ = 
+    let formula = fromString "A + B, !A + C + D + !B, B + E, !A, E" in
+    let formula = setVar formula ({name= "A"; neg= false}) in
+    let () = printFormula formula in
+    [%expect{|
+      formula = {
+      literals = B !B C D E
+      clauses =
+      !B C D
+      B E
+
+      E |}]
+
+let%expect_test _ = 
+    let formula = fromString "A + B, !A + C + D + !B, B + E, !A, E" in
+    let formula = setVar formula ({name = "A"; neg = true}) in
+    let () = printFormula formula in
+    [%expect{|
+      formula = {
+      literals = B !B C D E
+      clauses =
+      B
+      B E
+      E |}]

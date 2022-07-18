@@ -52,3 +52,9 @@ let printFormula formula =
     let () = printLitSet formula.literals in
     let () = print_string "clauses =\n" in
     _printSetList formula.clauses
+
+let litSetHas literal set = 
+    match LitSet.find_opt literal set with
+        Some _ -> true
+        |_ -> false
+
