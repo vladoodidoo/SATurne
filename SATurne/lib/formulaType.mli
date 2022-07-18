@@ -1,4 +1,3 @@
-open Types
 open Datastructures
 
 type formula = {

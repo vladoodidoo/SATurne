@@ -1,3 +1,5 @@
 (library
  (name SATurne)
+ (inline_tests)
+ (preprocess (pps ppx_inline_test ppx_expect))
  (modules_without_implementation types formulaType))
