@@ -87,6 +87,14 @@ let%expect_test _ =
     in
     [%expect{| |}] 
 
+let%expect_test _ = 
+    let formula = fromString "A + B, D + E" in
+    let () = match getUnitClause formula with
+        Some clause -> printLitSet clause
+        |None -> print_endline "None"
+    in
+    [%expect{| None |}] 
+
 (**
     Testing IncludesEmptyClause
  **)
@@ -111,3 +119,33 @@ let%expect_test _ =
     let formula = fromString "A + B" in
     let () = print_bool (includesEmptyClause formula) in
     [%expect{| false |}]
+
+(**
+    Testing getMonotoneLitreal
+ **)
+
+let%expect_test _ =
+    let formula = fromString "A, !B, B + C, !A" in
+    let () = match getMonotoneLiteral formula with
+        Some literal -> printLiteral literal
+        |None -> print_endline "None"
+    in
+    [%expect{| C |}]
+
+let%expect_test _ =
+    let formula = fromString "!C + A, !B, B + C, !A" in
+    let () = match getMonotoneLiteral formula with
+        Some literal -> printLiteral literal
+        |None -> print_endline "None"
+    in
+    [%expect{| None |}]
+    
+let%expect_test _ =
+    let formula = fromString "S, !B, B + !R, !A" in
+    let () = match getMonotoneLiteral formula with
+        Some literal -> printLiteral literal
+        |None -> print_endline "None"
+    in
+    [%expect{| !R |}]
+    (*Alphabetical order... if this test fails it does not mean the
+     provided implementation is not right*)
