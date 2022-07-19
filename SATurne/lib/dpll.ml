@@ -35,6 +35,11 @@ let rec monotoneLiteralFixing formula =
         Some literal -> monotoneLiteralFixing (setVar formula literal)
         |None -> formula
 
-(**
 let dpKernel formula = 
-**) 
+    monotoneLiteralFixing (unitClausePropagation formula)
+
+let choice formula = 
+    List.hd (LitSet.elements formula.literals)
+    (*TODO: Implement heuristic*)
+
+let dpll formula = 
