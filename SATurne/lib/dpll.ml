@@ -42,4 +42,9 @@ let choice formula =
     List.hd (LitSet.elements formula.literals)
     (*TODO: Implement heuristic*)
 
-let dpll formula = 
+let rec dpll formula =
+    match formula with
+        _ when LitSet.is_empty formula.literals -> true
+        |_ when includesEmptyClause formula -> false
+        |_ -> let var = choice formula in dpll (setVar formula var) 
+                    || dpll (setVar formula {var with neg = not var.neg})
