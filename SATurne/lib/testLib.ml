@@ -179,3 +179,21 @@ let%expect_test _ =
       B
       B E
       E |}]
+
+let%expect_test _ = 
+    let formula = fromString "A + B, !A" in
+    let res, lits = dpll formula in
+    let () = print_bool res in
+    let () = print_endline "" in
+    let () = printLitSet lits in
+    [%expect{|
+      true
+      !A B
+    |}]
+
+let%expect_test _ = 
+    let formula = fromString "A, !A" in
+    let res, _ = dpll formula in
+    let () = print_bool res in
+    let () = print_endline "" in
+    [%expect{| false |}]
