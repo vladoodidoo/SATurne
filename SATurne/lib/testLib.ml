@@ -1,6 +1,8 @@
 open Utils
 open FromString
 open Dpll
+open Datastructures
+open FormulaType
 
 (**
     Testing fromString
@@ -155,6 +157,15 @@ let%expect_test _ =
     Testing setVar
  **)
 
+let isSolved formula trueLits =
+    let _eltInTrueList elt = 
+        match LitSet.find_opt elt trueLits with
+            Some _ -> true
+            |_ -> false
+    in
+    List.for_all (fun clause -> LitSet.exists _eltInTrueList clause)
+        formula.clauses 
+
 let%expect_test _ = 
     let formula = fromString "A + B, !A + C + D + !B, B + E, !A, E" in
     let formula = setVar formula ({name= "A"; neg= false}) in
@@ -183,17 +194,23 @@ let%expect_test _ =
 let%expect_test _ = 
     let formula = fromString "A + B, !A" in
     let res, lits = dpll formula in
-    let () = print_bool res in
-    let () = print_endline "" in
-    let () = printLitSet lits in
-    [%expect{|
-      true
-      !A B
-    |}]
+    let () = print_bool (res = (isSolved formula lits)) in
+    [%expect{| true |}]
 
 let%expect_test _ = 
     let formula = fromString "A, !A" in
     let res, _ = dpll formula in
     let () = print_bool res in
-    let () = print_endline "" in
     [%expect{| false |}]
+
+let%expect_test _ =
+    let formula = fromString "A + B, !A + B + E, !E + B, !B + !A, !E" in
+    let res, lits = dpll formula in
+    let () = print_bool (res = (isSolved formula lits)) in
+    [%expect{| true |}]
+
+let%expect_test _ =
+    let formula = fromString "A + B + C, !C + !A + B" in
+    let res, lits = dpll formula in
+    let () = print_bool (res = (isSolved formula lits)) in
+    [%expect{| true |}]
